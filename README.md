@@ -1,0 +1,2 @@
+# KSR
+Komputerowe systemy rozpoznawania
