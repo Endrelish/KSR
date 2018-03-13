@@ -4,6 +4,10 @@
 
     public interface IMetricObject
     {
-        // TODO Do something here
+        List<double> Characteristics { get; }
+
+        double Resemblance { get; }
+
+        void SetResemblance(object other);
     }
 }
