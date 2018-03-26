@@ -1,4 +1,4 @@
-﻿namespace KSR1
+﻿namespace KSR1.Model
 {
     using System;
     using System.Collections.Generic;

@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0" Name="Button" VerticalAlignment="Top" Content="START" Click="ButtonBase_OnClick" />
+        <TextBlock Grid.Row="1" Name="TextBlock" />
     </Grid>
 </Window>

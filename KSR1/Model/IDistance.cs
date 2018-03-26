@@ -1,4 +1,4 @@
-﻿namespace KSR1
+﻿namespace KSR1.Model
 {
     public interface IDistance
     {

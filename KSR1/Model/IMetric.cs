@@ -1,7 +1,5 @@
-﻿namespace KSR1
+﻿namespace KSR1.Model
 {
-    using System.Collections;
-
     public interface IMetric
     {
         double GetMetric(IMetricObject first, IMetricObject second);

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KSR1
+﻿namespace KSR1.Model
 {
+    using System;
+
     public class Data : IComparable<Data>, IDistance
     {
         public double X { get; private set; }
@@ -16,9 +12,9 @@ namespace KSR1
 
         public Data(double x, double y, string category)
         {
-            X = x;
-            Y = y;
-            Category = category;
+            this.X = x;
+            this.Y = y;
+            this.Category = category;
         }
 
         public int CompareTo(Data compareData)
