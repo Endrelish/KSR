@@ -71,6 +71,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\IMetric.cs" />
+    <Compile Include="Model\EuclideanMetric.cs" />
+    <Compile Include="Model\ManhattanMetric.cs" />
     <Compile Include="Model\ReutersMetricObject.cs" />
     <Compile Include="Model\ReutersReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
