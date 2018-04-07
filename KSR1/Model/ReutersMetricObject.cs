@@ -1,10 +1,12 @@
 ﻿namespace KSR1.Model
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
 
-    public class ReutersMetricObject : IMetricObject
+    public class ReutersMetricObject
     {
-        public ReutersMetricObject(string place, string title, string dateline, string body)
+        public ReutersMetricObject(IEnumerable<string> place, string title, string dateline, string body)
         {
             this.Place = place;
             this.Dateline = dateline;
@@ -24,7 +26,7 @@
             }
         }
 
-        public string Place { get; private set; }
+        public IEnumerable<string> Place { get; private set; }
         public string Dateline { get; private set; }
 
         public string Title { get; private set; }

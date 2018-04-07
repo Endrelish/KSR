@@ -65,21 +65,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\Data.cs" />
-    <Compile Include="Model\IDistance.cs" />
-    <Compile Include="Model\IMetric.cs" />
-    <Compile Include="Model\IMetricObject.cs" />
-    <Compile Include="Model\KNearestNeighbours.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\ManhattanMetric.cs" />
-    <Compile Include="Model\Metric.cs" />
-    <Compile Include="Model\Reader.cs" />
     <Compile Include="Model\ReutersMetricObject.cs" />
+    <Compile Include="Model\ReutersReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

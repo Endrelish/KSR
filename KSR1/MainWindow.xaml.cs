@@ -1,6 +1,7 @@
 ﻿namespace KSR1
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Windows;
 
     using KSR1.Model;
@@ -24,12 +25,11 @@
             this.Button.Content = "NEXT";
             if (this.list == null)
             {
-                this.list = Reader.ReadDataString("D:\\Downloads\\reuters21578\\reut2-001.sgm");
+                this.list = ReutersReader.ReadReuters("D:\\Downloads\\reuters21578\\reut2-001.sgm").Select(r => r.Title);
                 this.enumerator = this.list.GetEnumerator();
             }
-
-            this.TextBlock.Text = this.enumerator.Current;
             this.enumerator.MoveNext();
+            this.TextBlock.Text = this.enumerator.Current;
         }
     }
 }
