@@ -71,6 +71,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ChebyshevMetric.cs" />
     <Compile Include="Model\IMetric.cs" />
     <Compile Include="Model\EuclideanMetric.cs" />
     <Compile Include="Model\ManhattanMetric.cs" />
