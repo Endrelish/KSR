@@ -57,13 +57,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Command.cs" />
     <Compile Include="Model\DuplicateComparer.cs" />
     <Compile Include="Model\FeatureVector.cs" />
     <Compile Include="Model\Knn.cs" />
     <Compile Include="Model\TfExtractor.cs" />
     <Compile Include="Model\TfidfExtractor.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="View\BooleanReverseConverter.cs" />
+    <Compile Include="View\PercentConverter.cs" />
     <Compile Include="View\WpfFileDialog.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -112,6 +116,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

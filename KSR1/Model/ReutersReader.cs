@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
 
     using HtmlAgilityPack;
 
@@ -14,16 +15,41 @@
 
             var places = new List<string> { "west-germany", "usa", "france", "uk", "canada", "japan" };
 
-            var ret = document.DocumentNode.Descendants("REUTERS")
-                .Where(r => r.Descendants("PLACES").First().Descendants("D").Any(d => places.Contains(d.InnerText)) && r.Descendants("PLACES").First().Descendants("D").Count() == 1)
+            var structure = document.DocumentNode.Descendants("REUTERS")
+                .Where(r => r.Descendants("PLACES").Select(p => p.Descendants("D").Count()).FirstOrDefault() == 1)
                 .Select(
-                    r => new ReutersMetricObject(
-                        r.Descendants("PLACES").First().Descendants("D").Select(d => System.Net.WebUtility.HtmlDecode(d.InnerText)).First(),
-                        System.Net.WebUtility.HtmlDecode(r.Descendants("TEXT").First().Descendants("TITLE").First().InnerText),
-                        System.Net.WebUtility.HtmlDecode(r.Descendants("TEXT").First().Descendants("DATELINE").First().InnerText),
-                        System.Net.WebUtility.HtmlDecode(r.Descendants("TEXT").First().Descendants("BODY").First().InnerText)));
+                    r => new
+                             {
+                                 places =
+                                 r.Descendants("PLACES")
+                                     .Select(p => p.Descendants("D").Select(d => WebUtility.HtmlDecode(d.InnerText)))
+                                     .FirstOrDefault().FirstOrDefault(),
+                                 title =
+                                 r.Descendants("TEXT")
+                                     .Select(
+                                         t => t.Descendants("TITLE").Select(tt => WebUtility.HtmlDecode(tt.InnerText)))
+                                     .FirstOrDefault().FirstOrDefault(),
+                                 dateline =
+                                 r.Descendants("TEXT")
+                                     .Select(
+                                         t => t.Descendants("DATELINE")
+                                             .Select(tt => WebUtility.HtmlDecode(tt.InnerText))).FirstOrDefault()
+                                     .FirstOrDefault(),
+                                 body = r.Descendants("TEXT")
+                                     .Select(
+                                         t => t.Descendants("BODY").Select(tt => WebUtility.HtmlDecode(tt.InnerText)))
+                                     .FirstOrDefault().FirstOrDefault(),
+                                 count = r.Descendants("PLACES").Select(p => p.Descendants("D").Count())
+                                     .FirstOrDefault()
+                             }).Where(r => places.Contains(r.places));
 
-            return ret;
+            var reuters = structure
+                .Where(
+                    a => a.places != null && a.title != null && a.dateline != null && a.body != null
+                         && places.Contains(a.places)).Select(
+                    a => new ReutersMetricObject(a.places, a.title, a.dateline, a.body));
+
+            return reuters;
         }
     }
 }

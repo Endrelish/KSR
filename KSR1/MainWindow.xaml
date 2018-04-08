@@ -4,12 +4,58 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KSR1"
+        xmlns:view="clr-namespace:KSR1.View"
+        xmlns:viewModel="clr-namespace:KSR1.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <Window.Resources>
+        <view:PercentConverter x:Key="PC" />
+        <viewModel:MainViewModel x:Key="ViewModel" />
+        <view:BooleanReverseConverter x:Key="BRC"/>
+    </Window.Resources>
+    <Grid  ShowGridLines="True" DataContext="{StaticResource ViewModel}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="5 5 5 5" IsEnabled="{Binding IsProcessing, Converter={StaticResource BRC}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="SETTINGS" FontWeight="Heavy" FontSize="15" />
+                <TextBlock Grid.Row="1" HorizontalAlignment="Left" Margin="0 10 0 0" Text="Metric" FontSize="13"/>
+                <ComboBox Grid.Row="2" Width="Auto" Height="Auto" ItemsSource="{Binding Metrics, Mode=OneTime}" SelectedItem="{Binding ChosenMetric}"/>
+
+                <TextBlock Grid.Row="3" HorizontalAlignment="Left" Margin="0 10 0 0" Text="Extractor" FontSize="13"/>
+                <ComboBox Grid.Row="4" Width="Auto" Height="Auto" ItemsSource="{Binding Extractors, Mode=OneTime}" SelectedItem="{Binding ChosenExtractor}"/>
+
+                <TextBlock Grid.Row="5" HorizontalAlignment="Left" Margin="0 10 0 0" Text="Training/test ratio" FontSize="13"/>
+                <Slider x:Name="Slider" Grid.Row="6" Margin="0 0 60 0" Minimum="10" Maximum="90" Value="{Binding TrainingRatio}"/>
+                <TextBox Grid.Row="6" HorizontalAlignment="Right" Width="20" Text="{Binding TrainingRatio, Converter={StaticResource PC}}"/>
+                <TextBlock Grid.Row="6" HorizontalAlignment="Right" Margin="0 0 23 0" Text=":"/>
+                <TextBox Grid.Row="6" HorizontalAlignment="Right" Margin="0 0 30 0" Width="20" Text="{Binding TrainingRatio}"/>
+
+                <TextBlock Grid.Row="7" HorizontalAlignment="Left" Margin="0 10 0 0" Text="Process files" FontSize="13"/>
+                <Button Grid.Row="8" HorizontalAlignment="Right" Content="Browse" Padding="5 0 5 0" Command="{Binding BrowseCommand}"/>
+                
+                <TextBlock Grid.Row="9" Text="{Binding Text}"/>
+            </Grid>
+            <TextBlock Grid.Row="1" Text="{Binding ProcessingText}" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
+        
     </Grid>
 </Window>
