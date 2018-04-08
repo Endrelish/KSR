@@ -6,52 +6,34 @@
 
     internal class TfExtractor : IExtractor
     {
-        public TfExtractor()
-        {
-            this.FeatureVector = new Dictionary<string, List<double>>();
-        }
 
-        private Dictionary<string, List<double>> FeatureVector { get; }
-
-        public FeatureVector ExtractFeatures(IEnumerable<ReutersMetricObject> reuters)
+        public void FeatureVector(IEnumerable<ReutersMetricObject> reuters)
         {
             foreach (var reuter in reuters)
             {
-                this.ExtractText(reuter.Body);
-            }
-            
-            return new FeatureVector(this.FeatureVector.ToDictionary(f => f.Key, f => f.Value.Average()));
-        }
+                var counted = this.CountWords(reuter);
+                reuter.Vector = new Dictionary<string, double>();
+                int max = counted.Values.Max();
 
-        private void AddFeature(string key, double value)
-        {
-            if (this.FeatureVector.TryGetValue(key, out var list))
-            {
-                list.Add(value);
-            }
-            else
-            {
-                var vector = new List<double> { value };
-                this.FeatureVector.Add(key, vector);
+                foreach (var c in counted)
+                {
+                    reuter.Vector.Add(c.Key, (double)c.Value / max);
+                }
             }
         }
 
-        private void ExtractText(string text)
+        private Dictionary<string, int> CountWords(ReutersMetricObject reuter)
         {
             var words = new Dictionary<string, int>();
-            char[] separators = { ' ', '\n', '\t' };
-            var separated = text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-            separated = separated.Where(s => !s.Contains("REUTER")).ToArray();
-            foreach (var s in separated)
+            reuter.SeparateBody();
+            foreach (var s in reuter.SeparatedBody)
             {
-                this.WordFound(words, s);
+                WordFound(words, s);
             }
 
-            foreach (var word in words)
-            {
-                this.AddFeature(word.Key, (double)word.Value / separated.Length);
-            }
+            return words;
         }
+        
 
         private void WordFound(Dictionary<string, int> words, string word)
         {

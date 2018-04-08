@@ -59,6 +59,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\FeatureVector.cs" />
     <Compile Include="Model\TfExtractor.cs" />
+    <Compile Include="Property.cs" />
     <Compile Include="View\WpfFileDialog.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -4,6 +4,6 @@
 
     public interface IExtractor
     {
-        FeatureVector ExtractFeatures(IEnumerable<ReutersMetricObject> reuters);
+        void FeatureVector(IEnumerable<ReutersMetricObject> reuters);
     }
 }
