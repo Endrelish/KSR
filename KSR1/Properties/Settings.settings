@@ -2,8 +2,11 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="KSR1.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="Property" Type="System.UInt32" Scope="User">
+    <Setting Name="Property" Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="K" Type="System.UInt32" Scope="Application">
+      <Value Profile="(Default)">5</Value>
     </Setting>
   </Settings>
 </SettingsFile>

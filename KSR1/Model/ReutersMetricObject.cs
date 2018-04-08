@@ -10,10 +10,10 @@
     {
         public ReutersMetricObject(string place, string title, string dateline, string body)
         {
-            this.Place = place;
-            this.Dateline = dateline;
-            this.Title = title;
-            this.Body = body;
+            this.Place = place.ToUpper();
+            this.Dateline = dateline.ToUpper();
+            this.Title = title.ToUpper();
+            this.Body = body.ToUpper();
         }
 
         public string Property
@@ -54,7 +54,7 @@
         {
             char[] separators = { ' ', '\n', '\t' };
             this.SeparatedBody = this.Body.Split(separators, StringSplitOptions.RemoveEmptyEntries)
-                .Where(s => !s.Contains("REUTER")).Select(w => w.ToUpper()).ToList();
+                .Where(s => !s.Contains("REUTER")).ToList();
         }
     }
 }
