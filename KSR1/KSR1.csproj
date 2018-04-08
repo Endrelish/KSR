@@ -57,6 +57,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\FeatureVector.cs" />
+    <Compile Include="Model\TfExtractor.cs" />
+    <Compile Include="View\WpfFileDialog.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -72,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\ChebyshevMetric.cs" />
+    <Compile Include="Model\IExtractor.cs" />
     <Compile Include="Model\IMetric.cs" />
     <Compile Include="Model\EuclideanMetric.cs" />
     <Compile Include="Model\ManhattanMetric.cs" />
