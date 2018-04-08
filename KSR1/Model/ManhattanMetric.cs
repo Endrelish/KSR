@@ -1,37 +1,26 @@
 ﻿namespace KSR1.Model
 {
     using System;
+    using System.Collections.Generic;
 
     public class ManhattanMetric : IMetric
     {
-        public double Resemblance(string first, string second)
+        public double Resemblance(Dictionary<string, double> first, Dictionary<string, double> second)
         {
             return 1.0d / Distance(first, second);
         }
 
-        public double Distance(string first, string second)
+        public double Distance(Dictionary<string, double> first, Dictionary<string, double> second)
         {
-            ulong distance = 0;
-            if (first.Length < second.Length) Swap(ref first, ref second);
+            double distance = 0.0d;
 
-            int i;
-
-            for (i = 0; i < second.Length; i++)
+            foreach (var d in first)
             {
-                distance += (ulong)Math.Abs(first[i] - second[i]);
-            }
-            for (i--; i < first.Length; i++)
-            {
-                distance += (ulong)Math.Abs(first[i] - 0x20);
+                second.TryGetValue(d.Key, out var score);
+                distance += Math.Abs(score - d.Value);
             }
 
             return distance;
-        }
-        private void Swap<T>(ref T first, ref T second)
-        {
-            var a = first;
-            first = second;
-            second = a;
         }
     }
 }

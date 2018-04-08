@@ -1,39 +1,26 @@
 ﻿namespace KSR1.Model
 {
     using System;
+    using System.Collections.Generic;
 
     internal class EuclideanMetric : IMetric
     {
-        public double Resemblance(string first, string second)
+        public double Resemblance(Dictionary<string, double> first, Dictionary<string, double> second)
         {
             return 1.0d / Distance(first, second);
         }
 
-        public double Distance(string first, string second)
+        public double Distance(Dictionary<string, double> first, Dictionary<string, double> second)
         {
-            ulong distance = 0;
-            if (first.Length < second.Length) Swap(ref first, ref second);
+            double distance = 0.0d;
 
-            int i;
-
-            for (i = 0; i < second.Length; i++)
+            foreach (var d in first)
             {
-                distance += (ulong)((first[i] - second[i]) * (first[i] - second[i]));
+                second.TryGetValue(d.Key, out var score);
+                distance += (score - d.Value) * (score - d.Value);
             }
-            for (i--; i < first.Length; i++)
-            {
-                distance += (ulong)Math.Pow(first[i] - 0x20, 2);
-            }
-
-            //return 1.0d / (Math.Sqrt(distance) + 1);
+            
             return Math.Sqrt(distance);
-        }
-
-        private void Swap<T>(ref T first, ref T second)
-        {
-            var a = first;
-            first = second;
-            second = a;
         }
     }
 }
