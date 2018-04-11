@@ -7,7 +7,7 @@
         xmlns:view="clr-namespace:KSR1.View"
         xmlns:viewModel="clr-namespace:KSR1.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="280" Width="525">
     <Window.Resources>
         <view:PercentConverter x:Key="PC" />
         <viewModel:MainViewModel x:Key="ViewModel" />
@@ -54,10 +54,36 @@
                 <Button Grid.Row="8" HorizontalAlignment="Right" Content="Process" Padding="5 0 5 0" Command="{Binding ProcessCommand}"/>
               
             </Grid>
-            <ProgressBar Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10 0 10 0" Height="15" Visibility="{Binding IsProcessing, Converter={StaticResource BTVC}}" DataContext="{Binding Path=ProcessingProgress}" Value="{Binding Processed}" Minimum="0" Maximum="{Binding All}"/>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding IsProcessing, Converter={StaticResource BTVC}}">
+                <ProgressBar VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10 0 10 0" Height="15" DataContext="{Binding Path=ProcessingProgress}" Value="{Binding Processed}" Minimum="0" Maximum="{Binding All}"/>
+            </StackPanel>
         </Grid>
-        <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding EfficiencyRatio}"/>
-        <TextBlock Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Text="{Binding ProcessingProgress.Processed}"/>
-        <TextBlock Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding ProcessingProgress.All}"/>
+        <Grid Grid.Column="1" VerticalAlignment="Center" Margin="30 0 30 0" DataContext="{Binding Path=Stats}">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Number of training documents" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="0" HorizontalAlignment="Right" Text="{Binding TrainingDocuments}"/>
+            <Separator Grid.Row="1"/>
+
+            <TextBlock Grid.Row="2" Text="Number of test documents" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="2" HorizontalAlignment="Right" Text="{Binding TestDocuments}"/>
+            <Separator Grid.Row="3"/>
+
+            <TextBlock Grid.Row="4" Text="Percent of correctly classified documents" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="4" HorizontalAlignment="Right" Text="{Binding Efficiency, StringFormat=#.##%}" />
+            <Separator Grid.Row="5"/>
+
+            <TextBlock Grid.Row="6" Text="Total elapsed computing time" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="6" HorizontalAlignment="Right" Text="{Binding ComputingTime, StringFormat=mm\\:ss\\:fff}"/>
+            <Separator Grid.Row="7"/>
+        </Grid>
     </Grid>
 </Window>

@@ -62,6 +62,7 @@
     <Compile Include="Model\FeatureVector.cs" />
     <Compile Include="Model\Knn.cs" />
     <Compile Include="Model\Progress.cs" />
+    <Compile Include="Model\Statistics.cs" />
     <Compile Include="Model\TfExtractor.cs" />
     <Compile Include="Model\TfidfExtractor.cs" />
     <Compile Include="Properties\Annotations.cs" />

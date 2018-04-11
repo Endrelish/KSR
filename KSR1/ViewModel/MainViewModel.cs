@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using System.Timers;
 
     using KSR1.Annotations;
     using KSR1.Model;
@@ -48,7 +50,8 @@
             this.extractors.Add("TF-IDF extractor", new TfidfExtractor());
 
             this.reuters = new List<ReutersMetricObject>();
-            this.ProcessingProgress = new Progress(0);
+            this.ProcessingProgress = new Progress(1);
+            Stats = new Statistics();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -132,22 +135,7 @@
         public bool ProcessingAvailable => this.chosenMetric != null && this.chosenExtractor != null;
 
         public Progress ProcessingProgress { get; set; }
-
-        public string ProcessingText
-        {
-            get => this.processingText;
-            set
-            {
-                if (value == this.processingText)
-                {
-                    return;
-                }
-
-                this.processingText = value;
-                this.OnPropertyChanged();
-            }
-        }
-
+        
         public int TrainingRatio
         {
             get => this.trainingRatio;
@@ -172,13 +160,18 @@
         private async void Process()
         {
             this.IsProcessing = true;
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             var processing = Task.Run(() => this.Processing());
-            var text = Task.Run(() => this.TextProcessing(s => this.ProcessingText = s, () => this.IsProcessing));
             await processing;
-            this.EfficiencyRatio = processing.Result;
+            stopwatch.Stop();
+            Stats.ComputingTime = stopwatch.Elapsed;
+
+            this.Stats.Efficiency = processing.Result;
             this.IsProcessing = false;
-            await text;
         }
+
+        public Statistics Stats { get; }
 
         private double Processing()
         {
@@ -189,13 +182,17 @@
             foreach (var s in files)
             {
                 this.reuters.AddRange(ReutersReader.ReadReuters(s));
-            }   
+            }
 
             this.ProcessingProgress.Reset(this.reuters.Count + (int)(this.reuters.Count * ((100 - this.TrainingRatio) / 10.0)));
             this.chosenExtractor.FeatureVector(this.reuters, this.ProcessingProgress);
 
             var training = this.reuters.Take(this.reuters.Count * this.TrainingRatio / 100);
             var test = this.reuters.Skip(this.reuters.Count * this.TrainingRatio / 100);
+
+
+            this.Stats.TrainingDocuments = training.Count();
+            this.Stats.TestDocuments = test.Count();
 
             var classified = 0;
 
@@ -210,26 +207,6 @@
             }
 
             return (double)classified / test.Count();
-        }
-
-        private void TextProcessing(Action<string> set, Func<bool> get)
-        {
-            var index = 0;
-            while (true)
-            {
-                string[] tab =
-                    { "Processing.    ", "Processing..   ", "Processing...  ", "Processing.... ", "Processing....." };
-                set(tab[index]);
-                index = (index + 1) % 5;
-                if (!get())
-                {
-                    break;
-                }
-
-                Task.Delay(500).Wait();
-            }
-
-            set(string.Empty);
         }
     }
 }

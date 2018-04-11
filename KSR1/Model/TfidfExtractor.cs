@@ -16,9 +16,10 @@
             tfExtractor.FeatureVector(reuters, new Progress(0));
             foreach (var reuter in reuters)
             {
-                foreach (var d in reuter.Vector)
+                var cp = reuter.Vector.Select(v => v.Key).ToList();
+                foreach (var d in cp)
                 {
-                    reuter.Vector[d.Key] = d.Value * Idf(d.Key, reuters, wordsIdf);
+                    reuter.Vector[d] *= Idf(d, reuters, wordsIdf);
                 }
                 progress.Processed++;
             }
