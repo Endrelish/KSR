@@ -1,12 +1,11 @@
 ﻿namespace KSR1.ViewModel
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
-    using System.Timers;
-    using System.Windows.Input;
 
     using KSR1.Annotations;
     using KSR1.Model;
@@ -14,27 +13,25 @@
 
     public class MainViewModel : INotifyPropertyChanged
     {
-        private ICommand browseCommand;
+        private readonly Dictionary<string, IExtractor> extractors;
+
+        private readonly Dictionary<string, IMetric> metrics;
+
+        private readonly List<ReutersMetricObject> reuters;
 
         private IExtractor chosenExtractor;
 
         private IMetric chosenMetric;
 
-        private readonly Dictionary<string, IExtractor> extractors;
+        private double efficiencyRatio;
 
         private string file;
 
         private bool isProcessing;
 
-        private readonly Dictionary<string, IMetric> metrics;
+        private Command processCommand;
 
         private string processingText;
-
-        private List<ReutersMetricObject> reuters;
-
-        private readonly Timer timer;
-
-        private int timerIndex;
 
         private int trainingRatio;
 
@@ -51,25 +48,18 @@
             this.extractors.Add("TF-IDF extractor", new TfidfExtractor());
 
             this.reuters = new List<ReutersMetricObject>();
-            this.timer = new Timer(500);
-            this.timer.Elapsed += (sender, e) => this.HandleTimer();
+            this.ProcessingProgress = new Progress(0);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public ICommand BrowseCommand
-        {
-            get
-            {
-                return this.browseCommand ?? (this.browseCommand = new Command(() => this.Browse(), true));
-            }
-        }
 
         public string ChosenExtractor
         {
             set
             {
                 this.chosenExtractor = this.extractors.First(m => m.Key == value).Value;
+                this.OnPropertyChanged(nameof(this.ProcessingAvailable));
+                this.ProcessCommand.OnCanExecuteChanged();
             }
         }
 
@@ -78,6 +68,23 @@
             set
             {
                 this.chosenMetric = this.metrics.First(m => m.Key == value).Value;
+                this.OnPropertyChanged(nameof(this.ProcessingAvailable));
+                this.ProcessCommand.OnCanExecuteChanged();
+            }
+        }
+
+        public double EfficiencyRatio
+        {
+            get => this.efficiencyRatio;
+            set
+            {
+                if (value.Equals(this.efficiencyRatio))
+                {
+                    return;
+                }
+
+                this.efficiencyRatio = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -100,16 +107,6 @@
                 }
 
                 this.isProcessing = value;
-                if (this.isProcessing)
-                {
-                    this.timer.Start();
-                }
-                else
-                {
-                    this.timer.Stop();
-                    this.ProcessingText = string.Empty;
-                }
-
                 this.OnPropertyChanged();
             }
         }
@@ -121,6 +118,20 @@
                 return this.metrics.Select(m => m.Key);
             }
         }
+
+        public Command ProcessCommand
+        {
+            get
+            {
+                return this.processCommand ?? (this.processCommand = new Command(
+                                                   () => this.Process(),
+                                                   () => this.ProcessingAvailable));
+            }
+        }
+
+        public bool ProcessingAvailable => this.chosenMetric != null && this.chosenExtractor != null;
+
+        public Progress ProcessingProgress { get; set; }
 
         public string ProcessingText
         {
@@ -158,37 +169,67 @@
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private async void Browse()
-        {
-            
-            await Task.Run(() => this.ProcessAsync());
-            this.IsProcessing = true;
-        }
-
-        private void HandleTimer()
-        {
-            string[] tab =
-                { "Processing.    ", "Processing..   ", "Processing...  ", "Processing.... ", "Processing....." };
-            this.ProcessingText = tab[this.timerIndex];
-            this.timerIndex = (this.timerIndex + 1) % 5;
-        }
-
         private async void Process()
         {
-            Task.Delay(5000);
+            this.IsProcessing = true;
+            var processing = Task.Run(() => this.Processing());
+            var text = Task.Run(() => this.TextProcessing(s => this.ProcessingText = s, () => this.IsProcessing));
+            await processing;
+            this.EfficiencyRatio = processing.Result;
+            this.IsProcessing = false;
+            await text;
         }
 
-        private async void ProcessAsync()
+        private double Processing()
         {
             var dialog = new WpfFileDialog();
             var files = dialog.GetOpenFilePath("Sgm files (*.sgm)|*.sgm|Ksr files (*.ksr)|*.ksr|All files (*.*)|*.*");
+            this.reuters.Clear();
 
             foreach (var s in files)
             {
                 this.reuters.AddRange(ReutersReader.ReadReuters(s));
+            }   
+
+            this.ProcessingProgress.Reset(this.reuters.Count + (int)(this.reuters.Count * ((100 - this.TrainingRatio) / 10.0)));
+            this.chosenExtractor.FeatureVector(this.reuters, this.ProcessingProgress);
+
+            var training = this.reuters.Take(this.reuters.Count * this.TrainingRatio / 100);
+            var test = this.reuters.Skip(this.reuters.Count * this.TrainingRatio / 100);
+
+            var classified = 0;
+
+            foreach (var o in test)
+            {
+                var category = Knn.Classify(o, training, this.chosenMetric);
+                if (category.Equals(o.Property))
+                {
+                    classified++;
+                }
+                ProcessingProgress.Processed += 10;
             }
-            await Task.Run(() => Process());
-            IsProcessing = false;
+
+            return (double)classified / test.Count();
+        }
+
+        private void TextProcessing(Action<string> set, Func<bool> get)
+        {
+            var index = 0;
+            while (true)
+            {
+                string[] tab =
+                    { "Processing.    ", "Processing..   ", "Processing...  ", "Processing.... ", "Processing....." };
+                set(tab[index]);
+                index = (index + 1) % 5;
+                if (!get())
+                {
+                    break;
+                }
+
+                Task.Delay(500).Wait();
+            }
+
+            set(string.Empty);
         }
     }
 }

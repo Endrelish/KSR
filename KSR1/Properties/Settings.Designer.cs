@@ -46,5 +46,17 @@ namespace KSR1.Properties {
                 this["K"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int N {
+            get {
+                return ((int)(this["N"]));
+            }
+            set {
+                this["N"] = value;
+            }
+        }
     }
 }

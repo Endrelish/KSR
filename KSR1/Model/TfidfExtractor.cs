@@ -4,20 +4,23 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using KSR1.Properties;
+
     public class TfidfExtractor : IExtractor
     {
-        public void FeatureVector(IEnumerable<ReutersMetricObject> reuters)
+        public void FeatureVector(IEnumerable<ReutersMetricObject> reuters, Progress progress)
         {
             var wordsIdf = new Dictionary<string, double>();
             var tfExtractor = new TfExtractor();
 
-            tfExtractor.FeatureVector(reuters);
+            tfExtractor.FeatureVector(reuters, new Progress(0));
             foreach (var reuter in reuters)
             {
                 foreach (var d in reuter.Vector)
                 {
                     reuter.Vector[d.Key] = d.Value * Idf(d.Key, reuters, wordsIdf);
                 }
+                progress.Processed++;
             }
         }
 

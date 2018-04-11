@@ -20,8 +20,8 @@
 
             for (int i = 0; i < Settings.Default.K; i++)
             {
-                categories.TryGetValue(distance[i], out var value);
-                categories[distance[i]] = value + 1;
+                categories.TryGetValue(distance.ElementAt(i).Value, out var value);
+                categories[distance.ElementAt(i).Value] = value + 1;
             }
 
             return categories.First(c => c.Value == categories.Max(x => x.Value)).Key;

@@ -6,21 +6,26 @@
     {
         private Action action;
 
-        private bool canExecute;
+        private Func<bool> canExecute;
 
-        public Command(Action action, bool canExecute)
+        public Command(Action action, Func<bool> canExecute)
         {
             this.action = action;
             this.canExecute = canExecute;
         }
         public bool CanExecute(object parameter)
         {
-            return this.canExecute;
+            return this.canExecute();
         }
 
         public void Execute(object parameter)
         {
             this.action();
+        }
+
+        public void OnCanExecuteChanged()
+        {
+            CanExecuteChanged.Invoke(this, null);
         }
 
         public event EventHandler CanExecuteChanged;

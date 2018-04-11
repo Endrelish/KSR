@@ -4,10 +4,12 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using KSR1.Properties;
+
     internal class TfExtractor : IExtractor
     {
 
-        public void FeatureVector(IEnumerable<ReutersMetricObject> reuters)
+        public void FeatureVector(IEnumerable<ReutersMetricObject> reuters, Progress progress)
         {
             foreach (var reuter in reuters)
             {
@@ -19,6 +21,9 @@
                 {
                     reuter.Vector.Add(c.Key, (double)c.Value / max);
                 }
+                reuter.Vector = reuter.Vector.Take(Settings.Default.N)
+                    .ToDictionary(v => v.Key, v => v.Value);
+                progress.Processed++;
             }
         }
 
