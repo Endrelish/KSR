@@ -182,8 +182,24 @@
 
             this.ProcessingProgress.Reset(
                 this.reuters.Count + (int)(this.reuters.Count * ((100 - this.TrainingRatio) / 10.0)));
-            this.chosenExtractor.FeatureVector(this.reuters, this.ProcessingProgress);
 
+            var t1 = Task.Run(
+                () => this.chosenExtractor.FeatureVector(
+                    this.reuters.Take(this.reuters.Count / 3),
+                    this.ProcessingProgress));
+            var t2 = Task.Run(
+                () => this.chosenExtractor.FeatureVector(
+                    this.reuters.Skip(this.reuters.Count / 3).Take(this.reuters.Count / 3),
+                    this.ProcessingProgress));
+            var t3 = Task.Run(
+                () => this.chosenExtractor.FeatureVector(
+                    this.reuters.Skip(this.reuters.Count / 3 * 2),
+                    this.ProcessingProgress));
+            //this.chosenExtractor.FeatureVector(this.reuters, this.ProcessingProgress);
+
+            t1.Wait();
+            t2.Wait();
+            t3.Wait();
             var training = this.reuters.Take(this.reuters.Count * this.TrainingRatio / 100);
             var test = this.reuters.Skip(this.reuters.Count * this.TrainingRatio / 100);
 
