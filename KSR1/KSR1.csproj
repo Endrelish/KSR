@@ -61,6 +61,7 @@
     <Compile Include="Model\DuplicateComparer.cs" />
     <Compile Include="Model\FeatureVector.cs" />
     <Compile Include="Model\Knn.cs" />
+    <Compile Include="Model\KsrReader.cs" />
     <Compile Include="Model\Progress.cs" />
     <Compile Include="Model\Statistics.cs" />
     <Compile Include="Model\TfExtractor.cs" />

@@ -1,13 +1,11 @@
 ﻿namespace KSR1.ViewModel
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
-    using System.Timers;
 
     using KSR1.Annotations;
     using KSR1.Model;
@@ -51,7 +49,7 @@
 
             this.reuters = new List<ReutersMetricObject>();
             this.ProcessingProgress = new Progress(1);
-            Stats = new Statistics();
+            this.Stats = new Statistics();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -131,13 +129,13 @@
                                                    () => this.ProcessingAvailable));
             }
         }
-        
-        
 
         public bool ProcessingAvailable => this.chosenMetric != null && this.chosenExtractor != null;
 
         public Progress ProcessingProgress { get; set; }
-        
+
+        public Statistics Stats { get; }
+
         public int TrainingRatio
         {
             get => this.trainingRatio;
@@ -162,36 +160,32 @@
         private async void Process()
         {
             this.IsProcessing = true;
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
             var processing = Task.Run(() => this.Processing());
             await processing;
-            stopwatch.Stop();
-            Stats.ComputingTime = stopwatch.Elapsed;
 
             this.Stats.Efficiency = processing.Result;
             this.IsProcessing = false;
         }
-
-        public Statistics Stats { get; }
 
         private double Processing()
         {
             var dialog = new WpfFileDialog();
             var files = dialog.GetOpenFilePath("Sgm files (*.sgm)|*.sgm|Ksr files (*.ksr)|*.ksr|All files (*.*)|*.*");
             this.reuters.Clear();
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             foreach (var s in files)
             {
-                this.reuters.AddRange(ReutersReader.ReadReuters(s));
+                this.reuters.AddRange(s.Contains(".ksr") ? KsrReader.ReadReuters(s) : ReutersReader.ReadReuters(s));
             }
 
-            this.ProcessingProgress.Reset(this.reuters.Count + (int)(this.reuters.Count * ((100 - this.TrainingRatio) / 10.0)));
+            this.ProcessingProgress.Reset(
+                this.reuters.Count + (int)(this.reuters.Count * ((100 - this.TrainingRatio) / 10.0)));
             this.chosenExtractor.FeatureVector(this.reuters, this.ProcessingProgress);
 
             var training = this.reuters.Take(this.reuters.Count * this.TrainingRatio / 100);
             var test = this.reuters.Skip(this.reuters.Count * this.TrainingRatio / 100);
-
 
             this.Stats.TrainingDocuments = training.Count();
             this.Stats.TestDocuments = test.Count();
@@ -205,8 +199,12 @@
                 {
                     classified++;
                 }
-                ProcessingProgress.Processed += 10;
+
+                this.ProcessingProgress.Processed += 10;
             }
+
+            stopwatch.Stop();
+            this.Stats.ComputingTime = stopwatch.Elapsed;
 
             return (double)classified / test.Count();
         }
