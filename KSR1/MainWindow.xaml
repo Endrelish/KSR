@@ -6,13 +6,15 @@
         xmlns:local="clr-namespace:KSR1"
         xmlns:view="clr-namespace:KSR1.View"
         xmlns:viewModel="clr-namespace:KSR1.ViewModel"
+        xmlns:properties="clr-namespace:KSR1.Properties"
         mc:Ignorable="d"
-        Title="MainWindow" Height="280" Width="525">
+        Title="MainWindow" Height="325" Width="525">
     <Window.Resources>
         <view:PercentConverter x:Key="PC" />
         <viewModel:MainViewModel x:Key="ViewModel" />
         <view:BooleanReverseConverter x:Key="BRC"/>
         <BooleanToVisibilityConverter x:Key="BTVC" />
+        <properties:Settings x:Key="Settings" />
     </Window.Resources>
     <Grid  ShowGridLines="True" DataContext="{StaticResource ViewModel}">
         <Grid.ColumnDefinitions>
@@ -36,6 +38,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="SETTINGS" FontWeight="Heavy" FontSize="15" />
                 <TextBlock Grid.Row="1" HorizontalAlignment="Left" Margin="0 10 0 0" Text="Metric" FontSize="13"/>
@@ -49,9 +52,23 @@
                 <TextBox Grid.Row="6" HorizontalAlignment="Right" Width="20" Text="{Binding TrainingRatio, Converter={StaticResource PC}}"/>
                 <TextBlock Grid.Row="6" HorizontalAlignment="Right" Margin="0 0 23 0" Text=":"/>
                 <TextBox Grid.Row="6" HorizontalAlignment="Right" Margin="0 0 30 0" Width="20" Text="{Binding TrainingRatio}"/>
-
-                <TextBlock Grid.Row="7" HorizontalAlignment="Left" Margin="0 10 0 0" Text="Process files" FontSize="13"/>
-                <Button Grid.Row="8" HorizontalAlignment="Right" Content="Process" Padding="5 0 5 0" Command="{Binding ProcessCommand}"/>
+                
+                <TextBlock Grid.Row="7" Text="Parameters" FontSize="13"/>
+                <Grid Grid.Row="8" DataContext="{StaticResource Settings}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Margin="20 0 0 0" Text="k:" ToolTip="K parameter in Knn algorithm."/>
+                    <TextBox Grid.Column="1" Margin="0 0 20 0" Width="25" Text="{Binding Default.K}" ToolTip="K parameter in Knn algorithm."/>
+                    <TextBlock Grid.Column="2" Margin="20 0 0 0" Text="n:" ToolTip="Size of the feature vector."/>
+                    <TextBox Grid.Column="3" Margin="0 0 20 0" Width="25" Text="{Binding Default.N}" ToolTip="Size of the feature vector."/>
+                </Grid>
+                
+                <TextBlock Grid.Row="9" HorizontalAlignment="Left" Margin="0 10 0 0" Text="Process files" FontSize="13"/>
+                <Button Grid.Row="10" HorizontalAlignment="Right" Content="Process" Padding="5 0 5 0" Command="{Binding ProcessCommand}"/>
               
             </Grid>
             <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding IsProcessing, Converter={StaticResource BTVC}}">

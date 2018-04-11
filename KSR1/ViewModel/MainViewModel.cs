@@ -131,6 +131,8 @@
                                                    () => this.ProcessingAvailable));
             }
         }
+        
+        
 
         public bool ProcessingAvailable => this.chosenMetric != null && this.chosenExtractor != null;
 
