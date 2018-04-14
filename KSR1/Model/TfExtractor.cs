@@ -21,7 +21,10 @@
                 {
                     reuter.Vector.Add(c.Key, (double)c.Value / max);
                 }
-                reuter.Vector = reuter.Vector.Take(Settings.Default.N)
+                //reuter.Vector = reuter.Vector.Take(Settings.Default.N)
+                //    .ToDictionary(v => v.Key, v => v.Value);
+
+                reuter.Vector = reuter.Vector
                     .ToDictionary(v => v.Key, v => v.Value);
                 progress.Processed++;
             }

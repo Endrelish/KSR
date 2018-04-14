@@ -2,6 +2,7 @@
 {
     public enum Property
     {
-        Places = 0
+        Places = 0,
+        Title = 1
     }
 }

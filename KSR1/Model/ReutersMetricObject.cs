@@ -24,6 +24,8 @@
                 {
                     case KSR1.Property.Places:
                         return this.Place;
+                    case KSR1.Property.Title:
+                        return this.Title;
                     default:
                         return Place;
                 }
