@@ -59,7 +59,6 @@
     </ApplicationDefinition>
     <Compile Include="Model\Command.cs" />
     <Compile Include="Model\DuplicateComparer.cs" />
-    <Compile Include="Model\FeatureVector.cs" />
     <Compile Include="Model\Knn.cs" />
     <Compile Include="Model\KsrReader.cs" />
     <Compile Include="Model\Progress.cs" />
